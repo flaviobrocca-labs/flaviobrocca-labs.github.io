@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kit eMRTD Reader · Lectura y verificación del chip de documentos ICAO 9303</title>
+<meta name="description" content="Kit de inicio: app Android (Flutter) que lee el chip NFC de un DNI o pasaporte ICAO 9303 por BAC o PACE, y servidor en Docker con autenticación pasiva. Código fuente, bitácora y documentación. USD 500, pago único.">
+<link rel="stylesheet" href="../assets/estilo.css">
+</head>
+<body>
+
+<div class="nav"><div class="wrap">
+  <a href="../">Flavio Brocca Labs</a>
+  <div class="links"><a href="#incluye">Qué incluye</a><a href="#compra">Cómo se compra</a><a href="#reembolsos">Reembolsos</a></div>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <div class="kicker">Kit de inicio · Onboarding seguro, bloque 1</div>
+  <h1>Kit eMRTD Reader: leer y verificar el chip de un DNI o pasaporte electrónico</h1>
+  <p class="lead">El prototipo completo de la serie de YouTube: una app Android que lee el chip por NFC (BAC o PACE) y un servidor en Docker que verifica la autenticidad de lo leído con autenticación pasiva. Con la bitácora de cómo se construyó.</p>
+  <div class="chips">
+    <span class="chip">ICAO 9303</span><span class="chip">Flutter · Android · NFC</span><span class="chip">FastAPI · Docker</span><span class="chip">BAC · PACE</span><span class="chip">Passive Authentication</span>
+  </div>
+  <div class="buy">
+    <div class="price">USD 500<small>Pago único · una licencia por organización</small></div>
+    <a id="btn-compra" class="btn" href="#">Comprar el kit</a>
+    <a class="btn sec" href="#incluye">Ver qué incluye</a>
+  </div>
+  <p class="note" id="nota-compra" style="margin-top:14px">El pago lo procesa Polar, que puede sumar impuestos según tu país. Antes de comprar, leé qué incluye y qué no.</p>
+</div></header>
+
+<main>
+
+<section><div class="wrap">
+  <div class="kicker">Para qué sirve</div>
+  <h2>No es un tutorial: es el trabajo ya hecho</h2>
+  <p>Llegar a una lectura confiable del chip lleva semanas: elegir librerías, pelearse con NFC en Android, entender el EF.SOD, convertir una foto en JPEG2000 y armar la verificación de firmas. Este kit es ese recorrido resuelto, <b>entre 80 y 120 horas de trabajo</b>, con cada decisión y cada problema documentados.</p>
+  <div class="grid3">
+    <div class="card"><h3>Evaluar la tecnología</h3><p class="sub" style="margin:0">Ver con un documento real qué se puede leer, qué se puede verificar y qué no, antes de comprometer un proyecto.</p></div>
+    <div class="card"><h3>Mostrarla a un cliente</h3><p class="sub" style="margin:0">Una demo que funciona en un teléfono, con el resultado de la verificación en pantalla y en JSON.</p></div>
+    <div class="card"><h3>Arrancar un desarrollo</h3><p class="sub" style="margin:0">Código fuente completo como base, y un documento que separa lo reutilizable de lo que hay que cambiar para producción.</p></div>
+  </div>
+</div></section>
+
+<section id="incluye"><div class="wrap">
+  <div class="kicker">Antes de comprar</div>
+  <h2>Qué incluye y qué no</h2>
+  <div class="grid2">
+    <div class="card ok">
+      <h3>✓ Incluye</h3>
+      <ul>
+        <li><b>App Android (Flutter + <span class="mono">dmrtd</span>):</b> conexión NFC, negociación BAC o PACE según lo que anuncia el chip (<span class="mono">EF.CardAccess</span>), lectura de DG1 (datos), DG2 (foto) y EF.SOD, resultado en JSON.</li>
+        <li><b>Servidor (Python/FastAPI en Docker, <span class="mono">pymrtd</span>):</b> autenticación pasiva completa (hashes, firmante DSC, firma y cadena hasta el CSCA), conversión de la foto JPEG2000 → JPEG y lista de los DG declarados en el SOD (indica, por ejemplo, si el documento soporta autenticación activa).</li>
+        <li><b>Bitácora:</b> cronología, tiempo invertido, decisiones y 13 problemas resueltos.</li>
+        <li><b>Documentación:</b> el protocolo por dentro, del prototipo a producción (componente por componente) y guía de escalabilidad.</li>
+        <li><b>Licencia comercial por organización:</b> uso en proyectos propios y de clientes, sin límite de proyectos.</li>
+      </ul>
+    </div>
+    <div class="card no">
+      <h3>✗ No incluye</h3>
+      <ul>
+        <li><b>Autenticación activa ni del chip</b> (DG15 / DG14): son las que detectan un chip clonado.</li>
+        <li><b>Certificados raíz (CSCA) reales:</b> el trust store viene vacío. Sin el CSCA del país, el resultado es "no válido" con el motivo, aunque hashes y firma estén bien.</li>
+        <li><b>Huellas e iris</b> (DG3 / DG4): requieren Extended Access Control con certificados del emisor.</li>
+        <li><b>Lectura de la MRZ con la cámara:</b> los tres datos para abrir el chip se tipean.</li>
+        <li><b>TLS, autenticación y límites</b> en el servidor: corre en red local por HTTP.</li>
+        <li><b>iOS.</b></li>
+        <li><b>Soporte ni implementación:</b> el kit se entrega tal cual.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout">Probado con documentos reales de Argentina y Paraguay en un modelo de teléfono (POCO C75 · HyperOS). El soporte de NFC varía según el fabricante: antes de llevarlo a producción, conviene validarlo en los modelos que vayas a usar.</div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="kicker">Requisitos</div>
+  <h2>Qué necesitás</h2>
+  <table>
+    <tr><th style="width:34%">Requisito</th><th>Detalle</th></tr>
+    <tr><td><b>Teléfono Android con NFC</b></td><td>Físico: el emulador no puede leer un chip.</td></tr>
+    <tr><td><b>Docker</b></td><td>Para el servidor (o Python 3.12+ sin Docker).</td></tr>
+    <tr><td><b>Flutter SDK ≥ 3.24</b></td><td>Para compilar la app.</td></tr>
+    <tr><td><b>Un documento ICAO 9303 con chip</b></td><td>DNI electrónico o pasaporte.</td></tr>
+    <tr><td><b>Cuenta de GitHub</b></td><td>El kit es un repositorio privado: el acceso llega como invitación a tu cuenta.</td></tr>
+  </table>
+</div></section>
+
+<section id="compra"><div class="wrap">
+  <div class="kicker">Cómo se compra</div>
+  <h2>Del pago al repositorio, en minutos</h2>
+  <ol class="steps">
+    <li><b>Pagás en Polar.</b> Polar procesa el pago como comerciante registrado y emite el comprobante.</li>
+    <li><b>Conectás tu cuenta de GitHub</b> en la pantalla de confirmación de la compra (o desde el enlace del correo de Polar). Este paso es necesario: sin él no hay a quién enviar la invitación.</li>
+    <li><b>Aceptás la invitación</b> al repositorio privado <span class="mono">flaviobrocca-labs/kit-emrtd-reader</span>, que llega por correo y en GitHub. Tenés acceso de lectura: lo clonás y trabajás en tu propia copia.</li>
+  </ol>
+  <h3>Licencia, en corto</h3>
+  <p>Una licencia por organización: tu equipo puede usar el código en proyectos propios y de clientes, sin límite de proyectos. No se permite revender ni redistribuir el kit como tal (por ejemplo, publicarlo en otro repositorio o venderlo). Las librerías <span class="mono">dmrtd</span> y <span class="mono">pymrtd</span> se usan sin modificar bajo LGPL-3.0, con licencia comercial alternativa de sus autores para distribución masiva. El texto completo está en el <span class="mono">LICENSE.md</span> del repositorio.</p>
+</div></section>
+
+<section><div class="wrap">
+  <div class="kicker">Preguntas frecuentes</div>
+  <h2>Preguntas frecuentes</h2>
+  <details><summary>¿Funciona con documentos de cualquier país?</summary><p>Con cualquier documento que cumpla ICAO 9303 (pasaportes electrónicos y DNI con chip compatibles). Se probó con documentos reales de Argentina y Paraguay. Para que la verificación dé "válido", tenés que cargar el certificado raíz (CSCA) del país emisor.</p></details>
+  <details><summary>¿Puedo usarlo en un proyecto para un cliente?</summary><p>Sí. La licencia permite usarlo en proyectos propios y de clientes. Lo que no se permite es revender o redistribuir el kit en sí.</p></details>
+  <details><summary>Somos varias personas, ¿cuántas licencias necesitamos?</summary><p>Una por organización. La invitación al repositorio llega a una cuenta de GitHub; desde ahí, tu equipo trabaja con su copia.</p></details>
+  <details><summary>¿Incluye soporte o actualizaciones?</summary><p>No incluye soporte ni implementación. Si publico correcciones en el repositorio, las ves con el mismo acceso, pero no hay un compromiso de actualizaciones.</p></details>
+  <details><summary>¿Detecta un documento clonado?</summary><p>No. La autenticación pasiva prueba que los datos no fueron alterados y que los firmó el emisor, pero no distingue una copia exacta del chip. Para eso hace falta autenticación activa o del chip, que el kit no implementa; la documentación explica cómo encararla y el servidor ya te dice si el documento la soporta.</p></details>
+  <details><summary>¿Es lo mismo que se ve en los videos?</summary><p>Sí: es el prototipo de la serie "Onboarding seguro". Los videos explican cómo funciona; el kit es el código para usarlo.</p></details>
+</div></section>
+
+<section id="reembolsos"><div class="wrap">
+  <div class="kicker">Política de reembolso</div>
+  <h2>Reembolsos</h2>
+  <p>El kit es código fuente que se puede copiar en cuanto se accede, por eso el reembolso no es por cambio de opinión. Es una garantía de que el kit hace lo que esta página describe.</p>
+  <table>
+    <tr><th style="width:34%"></th><th>Detalle</th></tr>
+    <tr><td><b>Plazo</b></td><td>14 días desde la compra.</td></tr>
+    <tr><td><b>Corresponde si…</b></td><td>El kit no hace lo que se describe en "Incluye" usando los requisitos indicados (por ejemplo, el servidor no levanta, la app no compila o no lee un documento ICAO 9303 compatible), y el problema no se resuelve con la documentación y las indicaciones que te envíe.</td></tr>
+    <tr><td><b>No corresponde si…</b></td><td>Cambiaste de opinión; esperabas algo de la lista "No incluye"; o el teléfono no tiene NFC o su NFC no permite leer documentos (IsoDep).</td></tr>
+    <tr><td><b>Cómo pedirlo</b></td><td>Escribí a <a href="mailto:flaviobrocca@gmail.com?subject=Kit%20eMRTD%20Reader%20-%20reembolso"><b>flaviobrocca@gmail.com</b></a> con el número de orden de Polar y una descripción del problema (qué paso falla y qué mensaje aparece).</td></tr>
+    <tr><td><b>Qué pasa al reembolsar</b></td><td>Se devuelve el pago por Polar, se quita el acceso al repositorio y termina la licencia: tenés que borrar las copias del kit.</td></tr>
+  </table>
+  <p class="sub">Esta política no limita los derechos del consumidor que la ley de tu país no permita renunciar.</p>
+</div></section>
+
+</main>
+
+<footer><div class="wrap">
+  Flavio Brocca Labs · Contacto: <a href="mailto:flaviobrocca@gmail.com">flaviobrocca@gmail.com</a> · <a href="../">Recursos gratuitos</a> · <a href="https://www.youtube.com/playlist?list=PLAynZmBy8yVU">Serie en YouTube</a>
+</div></footer>
+
+<script>
+// Cambiar a true cuando Polar esté activo y validado con el contador.
+const VENTA_HABILITADA = false;
+// Link de compra: ver ENLACES_CANAL.md. No publicarlo hasta habilitar la venta.
+const LINK_POLAR = "";
+const b = document.getElementById("btn-compra");
+if (VENTA_HABILITADA && LINK_POLAR) { b.href = LINK_POLAR; }
+else { b.textContent = "Disponible muy pronto"; b.classList.add("off"); b.removeAttribute("href"); }
+</script>
+</body>
+</html>
